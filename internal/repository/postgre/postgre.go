@@ -142,7 +142,7 @@ func (s *Storage) GetUser(login string) (model.User, error) {
 
 func (s *Storage) GetOrders(login string) ([]model.Order, error) {
 	countQuery := `SELECT COUNT(*) FROM orders WHERE login = $1`
-	selectQuery := `SELECT (number, status, accrual, uploaded_at) FROM orders WHERE login = $1`
+	selectQuery := `SELECT (number, status, accrual, uploaded_at) FROM orders WHERE login = $1 ORDER BY uploaded_at`
 
 	var cnt int
 	row := s.conn.QueryRow(context.Background(), countQuery, login)
@@ -226,7 +226,7 @@ func (s *Storage) Withdraw(login string, withdraw model.Withdraw) error {
 
 func (s *Storage) GetWithdrawals(login string) ([]model.Withdraw, error) {
 	countQuery := `SELECT COUNT(*) FROM withdrawals WHERE login = $1`
-	selectQuery := `SELECT (number, sum, processed_at) FROM withdrawals WHERE login = $1`
+	selectQuery := `SELECT (number, sum, processed_at) FROM withdrawals WHERE login = $1 ORDER BY processed_at`
 
 	var cnt int
 	row := s.conn.QueryRow(context.Background(), countQuery, login)

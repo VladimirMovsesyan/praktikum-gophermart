@@ -64,6 +64,7 @@ func NewConfiguration(flAddress, flDsn, flAccAddress *string) (configuration, er
 		return configuration{}, err
 	}
 
+	gin.SetMode(gin.ReleaseMode)
 	router := newRouter(storage)
 
 	server := &http.Server{
@@ -101,7 +102,7 @@ func newRouter(storage repository) *gin.Engine {
 		auth.POST("/login", handler.Login(storage))
 	}
 
-	api := router.Group("/api/user", handler.AuthMiddleware)
+	api := router.Group("/api/user", handler.AuthMiddleware, handler.CompressMiddleware, handler.DecompressMiddleware)
 	{
 		api.POST("/orders", handler.UpdateOrder(storage))
 		api.GET("/orders", handler.GetOrders(storage))
