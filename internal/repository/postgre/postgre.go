@@ -78,7 +78,7 @@ func (s *Storage) Create(user model.User) error {
 }
 
 func (s *Storage) UpdateOrder(login string, order model.Order) error {
-	loginDb, err := s.GetOrderOwner(order.Number)
+	loginDB, err := s.GetOrderOwner(order.Number)
 	if err != nil {
 		log.Println(err)
 		creationQuery := `INSERT INTO orders (number, login, status, uploaded_at) VALUES($1, $2, $3, $4)`
@@ -94,7 +94,7 @@ func (s *Storage) UpdateOrder(login string, order model.Order) error {
 		return err
 	}
 
-	if login != loginDb {
+	if login != loginDB {
 		return ErrorConflict
 	}
 

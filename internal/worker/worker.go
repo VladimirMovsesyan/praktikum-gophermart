@@ -63,6 +63,11 @@ func (wp *workerPool) newUpdateWorker() {
 				continue
 			}
 
+			err = resp.Body.Close()
+			if err != nil {
+				log.Println(err)
+			}
+
 			err = json.Unmarshal(bytes, &order)
 			if err != nil {
 				log.Println(err)
@@ -90,21 +95,14 @@ func (wp *workerPool) newUpdateWorker() {
 
 func (wp *workerPool) newRequestWorker() {
 	go func() {
-		for {
-			select {
-			case _, ok := <-wp.updateTicker.C:
-				if !ok {
-					return
-				}
-
-				orders, err := wp.storage.GetProcessingOrders()
-				if err != nil {
-					log.Println(err)
-					break
-				}
-				for _, order := range orders {
-					wp.AddOrder(order)
-				}
+		for range wp.updateTicker.C {
+			orders, err := wp.storage.GetProcessingOrders()
+			if err != nil {
+				log.Println(err)
+				break
+			}
+			for _, order := range orders {
+				wp.AddOrder(order)
 			}
 		}
 	}()

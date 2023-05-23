@@ -86,14 +86,14 @@ func Login(storage repository) gin.HandlerFunc {
 
 		user.Password = auth.HashPass(user.Password)
 
-		userDb, err := storage.GetUser(user.Login)
+		userDB, err := storage.GetUser(user.Login)
 		if err != nil {
 			log.Println(err)
 			ctx.Writer.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		if user.Password != userDb.Password {
+		if user.Password != userDB.Password {
 			log.Println("Error: wrong login/password passed")
 			ctx.Writer.WriteHeader(http.StatusUnauthorized)
 			return
